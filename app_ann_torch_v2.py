@@ -399,7 +399,7 @@ if st.button("Predict pushover curve parameters"):
         st.dataframe(df_show.style.format("{:.6f}"))
 
         st.success("Prediction")
-        st.dataframe(df.style.format("{:.6f}"))
+ #       st.dataframe(df.style.format("{:.6f}"))
  #       st.download_button(
  #           "Download CSV",
  #           df.to_csv(index=False),
