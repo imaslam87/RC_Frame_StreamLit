@@ -312,7 +312,6 @@ FEATURE_UI = {
     "rhoB": {"label": "Longitudinal reinforcement ratio (beam)", "unit": "-"},
 }
 
-
 def nice_label(key: str) -> str:
     ui = FEATURE_UI.get(key, {})
     label = ui.get("label", key)
@@ -320,6 +319,22 @@ def nice_label(key: str) -> str:
     if unit:
         return f"{label} ({key}) [{unit}]"
     return f"{label} ({key})"
+
+OUTPUT_UI = {
+    "F1":   {"label": "F1",   "unit": "kN"},
+    "K1":   {"label": "K1",   "unit": "kN/m"},
+    "F2":   {"label": "F2",   "unit": "kN"},
+    "D2":   {"label": "D2",   "unit": "m"},
+    "K23":  {"label": "K23",  "unit": "kN/m"},
+    "Fres": {"label": "Fres", "unit": "kN"},
+}
+
+def nice_out_label(key: str) -> str:
+    ui = OUTPUT_UI.get(key, {})
+    label = ui.get("label", key)
+    unit = (ui.get("unit", "") or "").strip()
+    return f"{label} [{unit}]" if unit else label
+
 
 
 # ----------------------------
@@ -356,7 +371,7 @@ for i, name in enumerate(FEATURES):
 
         inputs.append(val)
 
-if st.button("Predict (single)"):
+if st.button("Predict pushover curve parameters"):
     try:
         X_in = np.array(inputs, dtype=np.float32).reshape(1, -1)
 
@@ -378,16 +393,27 @@ if st.button("Predict (single)"):
         Yz = predict_with_states(Xz, fold_states, params, n_out=len(YVARS))
         Yo = inv_Y(Yz)
 
-        df = pd.DataFrame(Yo, columns=YVARS)
+        df_raw = pd.DataFrame(Yo, columns=YVARS)  # raw names for CSV if needed
+        df_show = df_raw.rename(columns={c: nice_out_label(c) for c in df_raw.columns})
+
+        st.dataframe(df_show.style.format("{:.6f}"))
 
         st.success("Prediction")
         st.dataframe(df.style.format("{:.6f}"))
+ #       st.download_button(
+ #           "Download CSV",
+ #           df.to_csv(index=False),
+ #           "ann_pred_single.csv",
+ #           "text/csv",
+
+# If you want the CSV ALSO to have units in headers, export df_show instead of df_raw.
         st.download_button(
             "Download CSV",
-            df.to_csv(index=False),
+            df_show.to_csv(index=False),
             "ann_pred_single.csv",
             "text/csv",
         )
+
     except Exception as e:
         st.error(f"Prediction failed: {e}")
 
@@ -425,17 +451,29 @@ if up is not None:
 
             Yz = predict_with_states(Xz, fold_states, params, n_out=len(YVARS))
             Yo = inv_Y(Yz)
-            out = pd.DataFrame(Yo, columns=YVARS)
+#           out = pd.DataFrame(Yo, columns=YVARS)
 
             st.success(f"Predicted {len(out)} rows.")
-            st.dataframe(out.head().style.format("{:.6f}"))
+#           st.dataframe(out.head().style.format("{:.6f}"))
+
+#           st.download_button(
+#              "Download predictions",
+#              out.to_csv(index=False),
+#              file_name="ann_predictions.csv",
+#              mime="text/csv",
+#         )
+
+            out_raw = pd.DataFrame(Yo, columns=YVARS)
+            out_show = out_raw.rename(columns={c: nice_out_label(c) for c in out_raw.columns}) 
+
+            st.dataframe(out_show.head().style.format("{:.6f}")) 
 
             st.download_button(
                 "Download predictions",
-                out.to_csv(index=False),
+                out_show.to_csv(index=False),
                 file_name="ann_predictions.csv",
                 mime="text/csv",
-            )
+            )                  
 
     except Exception as e:
         st.error(f"Failed to score file: {e}")
