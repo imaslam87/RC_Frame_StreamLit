@@ -336,8 +336,8 @@ st.sidebar.write(f"Head sizes: {params.get('head_sizes', [64])}")
 # ----------------------------
 # Single prediction UI
 # ----------------------------
-st.subheader("Single prediction")
-st.info("Tip: Enter realistic design values. Very small/zero inputs can produce unreliable predictions.", icon="ℹ️")
+st.subheader("Geometric and material properties of frame")
+#st.info("Tip: Enter realistic design values. Very small/zero inputs can produce unreliable predictions.", icon="ℹ️")
 
 cols = st.columns(3)
 inputs = []
