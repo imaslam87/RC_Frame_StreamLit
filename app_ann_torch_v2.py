@@ -321,7 +321,7 @@ def nice_label(key: str) -> str:
     return f"{label} ({key})"
 
 OUTPUT_UI = {
-    "F1":   {"label": "Force st first crack",   "unit": "kN"},
+    "F1":   {"label": "Force at first crack",   "unit": "kN"},
     "K1":   {"label": "Initial stiffness",   "unit": "kN/m"},
     "F2":   {"label": "Peak strength",   "unit": "kN"},
     "D2":   {"label": "Displacement corresponding to peak strength",   "unit": "m"},
