@@ -321,19 +321,22 @@ def nice_label(key: str) -> str:
     return f"{label} ({key})"
 
 OUTPUT_UI = {
-    "F1":   {"label": "F1",   "unit": "kN"},
-    "K1":   {"label": "K1",   "unit": "kN/m"},
-    "F2":   {"label": "F2",   "unit": "kN"},
-    "D2":   {"label": "D2",   "unit": "m"},
-    "K23":  {"label": "K23",  "unit": "kN/m"},
-    "Fres": {"label": "Fres", "unit": "kN"},
+    "F1":   {"label": "Force st first crack",   "unit": "kN"},
+    "K1":   {"label": "Initial stiffness",   "unit": "kN/m"},
+    "F2":   {"label": "Peak strength",   "unit": "kN"},
+    "D2":   {"label": "Displacement corresponding to peak strength",   "unit": "m"},
+    "K23":  {"label": "Post-peak slope",  "unit": "kN/m"},
+    "Fres": {"label": "Residual strength", "unit": "kN"},
 }
 
 def nice_out_label(key: str) -> str:
     ui = OUTPUT_UI.get(key, {})
     label = ui.get("label", key)
     unit = (ui.get("unit", "") or "").strip()
-    return f"{label} [{unit}]" if unit else label
+    if unit:
+        return f"{label} ({key}) [{unit}]"
+    return f"{label} ({key})"
+  #  return f"{label} [{unit}]" if unit else label
 
 
 
